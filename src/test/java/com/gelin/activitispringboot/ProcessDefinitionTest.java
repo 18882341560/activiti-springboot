@@ -44,8 +44,8 @@ public class ProcessDefinitionTest {
     @Test
     public void deploySimpleProcessDefinition() {
         Deployment deploy = repositoryService.createDeployment()
-                .name("请假流程")
-                .addClasspathResource("processes/helloworld.bpmn")
+                .name("测试流程")
+                .addClasspathResource("processes/test.bpmn")
                 .deploy();
         System.out.println("部署Id:"+deploy.getId());
         System.out.println("部署名称:"+deploy.getName());
