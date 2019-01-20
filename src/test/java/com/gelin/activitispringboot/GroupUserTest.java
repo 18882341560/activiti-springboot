@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,15 +23,15 @@ import java.util.Map;
 public class GroupUserTest {
 
 
-    @Autowired
+    @Resource
     private RepositoryService repositoryService;
-    @Autowired
+    @Resource
     private RuntimeService runtimeService; // 与正在执行的流程实例和执行对象相关的
-    @Autowired
+    @Resource
     private TaskService taskService;
-    @Autowired
+    @Resource
     private HistoryService historyService; // 历史相关的
-    @Autowired
+    @Resource
     private IdentityService identityService;
 
 
