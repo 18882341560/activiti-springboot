@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gelin.activitispringboot.dao.BaseDao" >
+
+    <parameterMap id="audit" type="com.gelin.activitispringboot.model.AuditProcess"/>
+    <resultMap id="audit" type="com.gelin.activitispringboot.model.AuditProcess"/>
+
+    <insert id="insertAuditProcess" parameterMap="audit" useGeneratedKeys="true" keyProperty="id">
+       insert into auditprocess (
+         name,
+         leaveDay,
+         cause,
+         remarks,
+         leaveTime,
+         status,
+         createTime
+       )
+       values (
+         #{name},
+         #{leaveDay},
+         #{remarks},
+         #{leaveTime},
+         #{status},
+         #{createTime}
+       )
+    </insert>
+
+
+
+</mapper>

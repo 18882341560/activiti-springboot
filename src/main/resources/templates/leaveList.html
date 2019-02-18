@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>请假申请列表</h1>
+<table style="width: 60%;text-align: center">
+    <thead>
+    <tr>
+        <td>id</td>
+        <td>请假人</td>
+        <td>请假天数</td>
+        <td>请假事由</td>
+        <td>请假备注</td>
+        <td>请假时间</td>
+        <td>请假状态</td>
+        <td>操作</td>
+    </tr>
+
+    </thead>
+
+    <tbody>
+    <tr th:each="pl:${processList}">
+        <td th:text="${pl.id}"></td>
+        <td th:text="${pl.name}"></td>
+        <td th:text="${pl.version}"></td>
+        <td th:text="${pl.deploymentId}"></td>
+        <td th:text="${pl.bpmnName}"></td>
+        <td th:text="${pl.pngName}"></td>
+        <td th:text="${pl.pngName}"></td>
+        <td>
+            <a>修改</a>
+            <a>删除</a>
+            <a>申请请假</a>
+            <a>查看审核记录</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

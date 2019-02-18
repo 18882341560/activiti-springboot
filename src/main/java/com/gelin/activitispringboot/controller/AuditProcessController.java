@@ -55,7 +55,6 @@ public class AuditProcessController {
             }
         }
         InputStream is = repositoryService.getResourceAsStream(id, resourceName);
-//            FileInputStream in = new FileInputStream(file);
             OutputStream os = response.getOutputStream();
             byte[] b = new byte[1024];
             while(is.read(b)!= -1) {
@@ -64,6 +63,18 @@ public class AuditProcessController {
             is.close();
             os.flush();
             os.close();
+    }
+
+
+    @RequestMapping("/delDeployById")
+    @ResponseBody
+    public Object delDeployById(String id) throws Exception {
+        return auditProcessService.delDeployById(id);
+    }
+
+    @RequestMapping("/leaveListHtml")
+    public String leaveListHtml(){
+        return "leaveList";
     }
 
 

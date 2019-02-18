@@ -37,4 +37,10 @@ public class AuditProcessServiceImpl implements AuditProcessService {
                          .deploy();
         return "部署成功";
     }
+
+    @Override
+    public Object delDeployById(String id) throws Exception {
+        repositoryService.deleteDeployment(id,true);
+        return "删除成功";
+    }
 }

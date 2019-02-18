@@ -10,5 +10,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface AuditProcessService {
 
     Object auditDeploy(String name, MultipartFile file) throws Exception;
-
+    Object delDeployById(String id) throws Exception;
 }
