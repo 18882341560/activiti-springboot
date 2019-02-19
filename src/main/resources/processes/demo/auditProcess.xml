@@ -26,7 +26,7 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${auditType=='驳回'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="_12" name="驳回" sourceRef="_4" targetRef="_9">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${auditType=='驳回']]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${auditType=='驳回'}]]></conditionExpression>
     </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram documentation="background=#3C3F41;count=1;horizontalcount=1;orientation=0;width=842.4;height=1195.2;imageableWidth=832.4;imageableHeight=1185.2;imageableX=5.0;imageableY=5.0" id="Diagram-_1" name="New Diagram">

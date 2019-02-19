@@ -2,6 +2,7 @@ package com.gelin.activitispringboot.controller;
 
 import com.gelin.activitispringboot.dao.BaseDao;
 import com.gelin.activitispringboot.model.AuditProcess;
+import com.gelin.activitispringboot.model.AuditRecords;
 import com.gelin.activitispringboot.model.User;
 import com.gelin.activitispringboot.service.AuditProcessService;
 import com.gelin.activitispringboot.util.DateUtils;
@@ -87,8 +88,8 @@ public class AuditProcessController {
     public String leaveListHtml(Model model,HttpSession session) throws Exception {
         User user = (User) session.getAttribute("user");
         //这里根据任务办理人来查询
-        List<AuditProcess> all = baseDao.findAllByCreateUserId(user.getId());
-        model.addAttribute("list",all);
+//        List<AuditProcess> all = baseDao.findAllByCreateUserId(user.getId());
+//        model.addAttribute("list",all);
         return "leaveList";
     }
 
@@ -138,9 +139,29 @@ public class AuditProcessController {
 
     //领导审核
     @RequestMapping("/exam")
-    public Object exam(String remark,Integer type,Integer auditId,HttpSession session){
+    @ResponseBody
+    public Object exam(String remark,Integer type,Integer auditId,HttpSession session) throws Exception {
         User user = (User) session.getAttribute("user");
-        return null;
+        return auditProcessService.exam(remark,type,auditId,user);
+    }
+
+
+    //我的请假列表
+    @RequestMapping("/myLeaveListHtml")
+    public String myLeaveListHtml(HttpSession session,Model model){
+        User user = (User) session.getAttribute("user");
+        List<AuditProcess> all = baseDao.findAllByCreateUserId(user.getId());
+        model.addAttribute("list",all);
+        return "myLeaveList";
+    }
+
+    @RequestMapping("/recordList")
+    public String recordList(Integer id,Model model){
+        AuditProcess ap = baseDao.findOneAuditProcessById(id);
+        List<AuditRecords> record = baseDao.findAllRecordByAuditId(id);
+        model.addAttribute("ap",ap);
+        model.addAttribute("list",record);
+        return "leaveRecord";
     }
 
 }

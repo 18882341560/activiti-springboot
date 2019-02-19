@@ -109,14 +109,22 @@
          auditProcessId,
          remarks,
          examineUserId,
-         examineStatus
+         examineStatus,
+         examineTime
        ) values (
          #{auditProcessId},
          #{remarks},
          #{examineUserId},
-         #{examineStatus}
+         #{examineStatus},
+         #{examineTime}
        )
     </insert>
+
+    <select id="findAllRecordByAuditId" resultMap="record">
+        select t1.*,t2.name as examineName from auditrecords t1
+        left join user t2 on t1.examineUserId = t2.id
+        where t1.auditProcessId = #{id}
+    </select>
 
 
 

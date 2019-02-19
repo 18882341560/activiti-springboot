@@ -18,8 +18,9 @@
 <a href="/index/deployList">部署管理</a><br/>
 <select id="sel" onchange="toHtml(this)">
     <option value="0">请选择</option>
-    <option value="1">我的申请列表</option>
-    <option value="2">请假审核</option>
+    <option value="1">申请请假</option>
+    <option value="2">请假任务办理</option>
+    <option value="3">我的请假</option>
 </select>
 <script src="../js/jquery-3.2.0.min.js" type="text/javascript"></script>
 <script>
@@ -31,6 +32,9 @@
         }
         if(v == 2){
             window.location.href = "/audit/leaveExamineListHtml";
+        }
+        if(v == 3){
+            window.location.href = "/audit/myLeaveListHtml";
         }
     }
     

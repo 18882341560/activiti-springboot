@@ -2,8 +2,10 @@ package com.gelin.activitispringboot.service.impl;
 
 import com.gelin.activitispringboot.dao.BaseDao;
 import com.gelin.activitispringboot.model.AuditProcess;
+import com.gelin.activitispringboot.model.AuditRecords;
 import com.gelin.activitispringboot.model.User;
 import com.gelin.activitispringboot.service.AuditProcessService;
+import com.gelin.activitispringboot.util.DateUtils;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -72,6 +74,16 @@ public class AuditProcessServiceImpl implements AuditProcessService {
 
     @Override
     public Object save(AuditProcess auditProcess) throws Exception {
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("AuditProcess");
+
+        //查询第一个任务，其实就是请假申请任务
+        Task task = taskService.createTaskQuery()
+                .processInstanceId(pi.getId())
+                .singleResult();
+
+        //设置任务办理人
+        taskService.setAssignee(task.getId(),auditProcess.getCreateUserId().toString());
+        auditProcess.setProcessInstanceId(pi.getId());
         baseDao.insertAuditProcess(auditProcess);
         return "新增成功";
     }
@@ -88,7 +100,10 @@ public class AuditProcessServiceImpl implements AuditProcessService {
                         .processInstanceId(a.getProcessInstanceId())
                         .singleResult();
           if(pi != null){
-             auditProcessList.add(baseDao.findOneAuditProcessByProcessInstanceId(pi.getId()));
+             AuditProcess ap = baseDao.findOneAuditProcessByProcessInstanceId(pi.getId());
+             if(ap != null){
+                 auditProcessList.add(ap);
+             }
           }
         });
         return auditProcessList;
@@ -97,15 +112,15 @@ public class AuditProcessServiceImpl implements AuditProcessService {
     @Override
     public Object startAuditProcess(Integer id,Integer userId) throws Exception {
 
-        ProcessInstance pi = runtimeService.startProcessInstanceByKey("AuditProcess");
-
+//        ProcessInstance pi = runtimeService.startProcessInstanceByKey("AuditProcess");
+        AuditProcess ap = baseDao.findOneAuditProcessById(id);
         //查询第一个任务，其实就是请假申请任务
         Task task = taskService.createTaskQuery()
-                .processInstanceId(pi.getId())
+                .processInstanceId(ap.getProcessInstanceId())
                 .singleResult();
-
-        //设置任务办理人
-        taskService.setAssignee(task.getId(),userId.toString());
+//
+//        //设置任务办理人
+//        taskService.setAssignee(task.getId(),userId.toString());
 
         //完成任务
         taskService.complete(task.getId());
@@ -113,16 +128,65 @@ public class AuditProcessServiceImpl implements AuditProcessService {
         //将流程实例id记录数据表中
         AuditProcess auditProcess = AuditProcess.builder()
                 .id(id)
-                .processInstanceId(pi.getId())
                 .status(2)
                 .build();
         baseDao.updateAuditProcess(auditProcess);
-        return "申请成功";
+        return "办理成功";
     }
 
     @Override
     public Object exam(String remark, Integer type,Integer auditId, User user) throws Exception {
+        AuditProcess auditProcess = baseDao.findOneAuditProcessById(auditId);
+        AuditProcess ap = AuditProcess.builder()
+                .id(auditId)
+                .build();
+        AuditRecords auditRecords = AuditRecords.builder()
+                .auditProcessId(auditId)
+                .examineUserId(user.getId())
+                .remarks(remark)
+                .examineTime(DateUtils.getLocalDateTimeByYYYYMMDDHHmmss())
+                .build();
+        Task task = taskService.createTaskQuery()
+                .processInstanceId(auditProcess.getProcessInstanceId())
+                .singleResult();
 
-        return null;
+        //这里设置流程变量
+        Map<String,Object> map = new HashMap<>();
+
+        if(task.getName().equals("部门经理审批")){
+            if(type == 1){//通过
+                ap.setStatus(2);
+                auditRecords.setExamineStatus(1);
+                map.put("auditType","批准");
+            }else { //驳回
+                ap.setStatus(4);
+                auditRecords.setExamineStatus(2);
+                map.put("auditType","驳回");
+            }
+            taskService.complete(task.getId(),map);
+        }else if(task.getName().equals("总经理审批")){
+            if(type == 1){//通过
+                ap.setStatus(3);
+                auditRecords.setExamineStatus(1);
+                map.put("auditType","批准");
+                taskService.complete(task.getId(),map);
+            }else { //驳回
+                ap.setStatus(4);
+                auditRecords.setExamineStatus(2);
+                map.put("auditType","驳回");
+                taskService.complete(task.getId(),map);
+                //返回开始申请流程，设置任务的办理人,还要设置请假单的状态
+                task = taskService.createTaskQuery()
+                        .processInstanceId(auditProcess.getProcessInstanceId())
+                        .singleResult();
+                taskService.setAssignee(task.getId(),auditProcess.getCreateUserId().toString());
+                ap.setStatus(1);
+            }
+        }
+
+        baseDao.updateAuditProcess(ap);
+        baseDao.insertAuditRecords(auditRecords);
+
+        return "审核成功";
     }
 }

@@ -26,4 +26,5 @@ public interface BaseDao {
 
     /*审核记录*/
     int insertAuditRecords(AuditRecords auditRecords);
+    List<AuditRecords> findAllRecordByAuditId(Integer id);
 }
