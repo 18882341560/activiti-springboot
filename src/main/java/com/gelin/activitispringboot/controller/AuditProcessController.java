@@ -1,16 +1,23 @@
 package com.gelin.activitispringboot.controller;
 
+import com.gelin.activitispringboot.dao.BaseDao;
+import com.gelin.activitispringboot.model.AuditProcess;
+import com.gelin.activitispringboot.model.User;
 import com.gelin.activitispringboot.service.AuditProcessService;
+import com.gelin.activitispringboot.util.DateUtils;
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.List;
 
@@ -27,6 +34,10 @@ public class AuditProcessController {
     private AuditProcessService auditProcessService;
     @Resource
     private RepositoryService repositoryService;
+    @Resource
+    private TaskService taskService;
+    @Autowired
+    private BaseDao baseDao;
 
     // 部署请假流程
     @RequestMapping("/deploy")
@@ -73,9 +84,63 @@ public class AuditProcessController {
     }
 
     @RequestMapping("/leaveListHtml")
-    public String leaveListHtml(){
+    public String leaveListHtml(Model model,HttpSession session) throws Exception {
+        User user = (User) session.getAttribute("user");
+        //这里根据任务办理人来查询
+        List<AuditProcess> all = baseDao.findAllByCreateUserId(user.getId());
+        model.addAttribute("list",all);
         return "leaveList";
     }
 
+    @RequestMapping("/leaveExamineListHtml")
+    public String leaveExamineListHtml(Model model,HttpSession session) throws Exception {
+        User user = (User) session.getAttribute("user");
+        //这里根据任务办理人来查询
+        List<AuditProcess> all = auditProcessService.AuditProcessAssigneeList(user);
+        model.addAttribute("list",all);
+        return "leaveExamineList";
+    }
+
+    //新增请假申请
+    @RequestMapping("/save")
+    @ResponseBody
+    public Object save(AuditProcess auditProcess, HttpSession session) throws Exception {
+        User user = (User) session.getAttribute("user");
+        auditProcess.setStatus(1);
+        auditProcess.setCreateUserId(user.getId());
+        auditProcess.setName(user.getName());
+        auditProcess.setCreateTime(DateUtils.getLocalDateTimeByYYYYMMDDHHmmss());
+        return auditProcessService.save(auditProcess);
+    }
+
+    @RequestMapping("/addLeave")
+    public String addLeave(){
+        return "addLeave";
+    }
+
+
+    //申请请假，开始流程
+    @RequestMapping("/startAuditProcess")
+    @ResponseBody
+    public Object startAuditProcess(Integer id,HttpSession session) throws Exception {
+        User user = (User) session.getAttribute("user");
+        return auditProcessService.startAuditProcess(id,user.getId());
+    }
+
+
+    //跳转审核页面
+    @RequestMapping("/examLeaveHtml")
+    public String examLeaveHtml(Integer id,Model model){
+        AuditProcess process = baseDao.findOneAuditProcessById(id);
+        model.addAttribute("audit",process);
+        return "examLeave";
+    }
+
+    //领导审核
+    @RequestMapping("/exam")
+    public Object exam(String remark,Integer type,Integer auditId,HttpSession session){
+        User user = (User) session.getAttribute("user");
+        return null;
+    }
 
 }

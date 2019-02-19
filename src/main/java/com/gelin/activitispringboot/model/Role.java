@@ -13,7 +13,6 @@ import java.io.Serializable;
  */
 @Data
 @Builder
-@NoArgsConstructor
 public class Role implements Serializable {
 
     private static final long serialVersionUID = -7940738874723129067L;

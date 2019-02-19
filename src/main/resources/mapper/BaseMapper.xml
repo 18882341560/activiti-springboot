@@ -5,6 +5,12 @@
     <parameterMap id="audit" type="com.gelin.activitispringboot.model.AuditProcess"/>
     <resultMap id="audit" type="com.gelin.activitispringboot.model.AuditProcess"/>
 
+    <parameterMap id="user" type="com.gelin.activitispringboot.model.User"/>
+    <resultMap id="user" type="com.gelin.activitispringboot.model.User"/>
+
+    <parameterMap id="record" type="com.gelin.activitispringboot.model.AuditRecords"/>
+    <resultMap id="record" type="com.gelin.activitispringboot.model.AuditRecords"/>
+
     <insert id="insertAuditProcess" parameterMap="audit" useGeneratedKeys="true" keyProperty="id">
        insert into auditprocess (
          name,
@@ -13,15 +19,102 @@
          remarks,
          leaveTime,
          status,
-         createTime
+         createTime,
+         createUserId,
+         processInstanceId
        )
        values (
          #{name},
          #{leaveDay},
+         #{cause},
          #{remarks},
          #{leaveTime},
          #{status},
-         #{createTime}
+         #{createTime},
+         #{createUserId},
+         #{processInstanceId}
+       )
+    </insert>
+
+    <update id="updateAuditProcess" parameterMap="audit">
+        update auditprocess
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="leaveDay != null">
+                leaveDay = #{leaveDay},
+            </if>
+            <if test="cause != null">
+                cause = #{cause},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks},
+            </if>
+            <if test="leaveTime != null">
+                leaveTime = #{leaveTime},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime},
+            </if>
+            <if test="createUserId != null">
+                createUserId = #{createUserId},
+            </if>
+            <if test="processInstanceId != null">
+                processInstanceId = #{processInstanceId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="findOneAuditProcessById" resultMap="audit">
+        select * from auditprocess where id = #{id}
+    </select>
+
+    <select id="findOneAuditProcessByProcessInstanceId" resultMap="audit">
+        select * from auditprocess where processInstanceId = #{id}
+    </select>
+
+    <select id="findAll" resultMap="audit">
+       select * from auditprocess
+    </select>
+
+    <select id="findAllByCreateUserId" resultMap="audit">
+        select * from auditprocess where createUserId = #{userId}
+    </select>
+
+
+    <select id="findOneByLogin" resultMap="user">
+        select * from user where username = #{username} and password = #{password}
+    </select>
+
+    <select id="findOneById" resultMap="user">
+        select * from user where id = #{id}
+    </select>
+
+    <select id="findAllUserByRoleName" resultMap="user">
+        select t3.* from role t1
+        left join userrolerelation t2 on t1.id = t2.roleId
+        left join user t3 on t2.userId = t3.id
+        where t1.name = #{name}
+    </select>
+
+    <!--===========================审核记录============================-->
+
+    <insert id="insertAuditRecords" parameterMap="record" useGeneratedKeys="true" keyProperty="id">
+       insert into auditrecords (
+         auditProcessId,
+         remarks,
+         examineUserId,
+         examineStatus
+       ) values (
+         #{auditProcessId},
+         #{remarks},
+         #{examineUserId},
+         #{examineStatus}
        )
     </insert>
 

@@ -29,5 +29,7 @@ public class AuditProcess implements Serializable {
     private String leaveTime; //请假时间
     private Integer status; //请假状态  1 初始录入  2 审批中  3 审核通过
     private String createTime; //创建时间
+    private Integer createUserId; //创建人
+    private String processInstanceId; //流程实例Id
 
 }

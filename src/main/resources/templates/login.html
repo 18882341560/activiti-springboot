@@ -7,13 +7,33 @@
 <body>
 <div style="text-align: center">
     <h1>登陆</h1>
-    账号:<input type="text"/><br/>
-    密码:<input type="password"/><br/>
-    <button>提交</button>
+    账号:<input type="text" id="username"/><br/>
+    密码:<input type="password" id="password"/><br/>
+    <button onclick="login()">提交</button>
 </div>
 
 
 <script src="../js/jquery-3.2.0.min.js" type="text/javascript"></script>
-
+<script>
+    function login() {
+        var username = $("#username").val();
+        var password = $("#password").val();
+        $.ajax({
+            url :"/index/login",
+            method:"post",
+            data:{
+                "username":username,
+                "password":password,
+            },
+            success:function (data) {
+                if(data == '登陆成功'){
+                   window.location.href = "/index/index";
+                }else {
+                    alert(data);
+                }
+            }
+        });
+    }
+</script>
 </body>
 </html>
