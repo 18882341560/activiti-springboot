@@ -32,11 +32,11 @@ public class FirstPlanController {
 
     @RequestMapping("/save")
     @ResponseBody
-    public Object save(FirstPlan firstPlan, HttpSession session){
+    public Object save(FirstPlan firstPlan, HttpSession session) throws Exception {
         User user = (User) session.getAttribute("user");
         firstPlan.setCreateUserId(user.getId());
         firstPlan.setCreateDateTime(DateUtils.getLocalDateTimeByYYYYMMDDHHmmss());
-        return null;
+        return firstPlanService.save(firstPlan);
     }
 
 

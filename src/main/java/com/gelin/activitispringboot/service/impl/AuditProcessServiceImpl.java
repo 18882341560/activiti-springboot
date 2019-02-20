@@ -161,7 +161,7 @@ public class AuditProcessServiceImpl implements AuditProcessService {
                 .processInstanceId(auditProcess.getProcessInstanceId())
                 .singleResult();
 
-        taskService.setAssignee(task.getId(),user.getId().toString());
+//        taskService.setAssignee(task.getId(),user.getId().toString());
         //这里设置流程变量
         Map<String,Object> map = new HashMap<>();
 

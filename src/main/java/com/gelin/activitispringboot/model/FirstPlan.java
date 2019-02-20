@@ -13,8 +13,8 @@ import java.io.Serializable;
  */
 @Data
 @Builder
-@NoArgsConstructor
 public class FirstPlan implements Serializable {
+    private static final long serialVersionUID = 3886606234294382495L;
     private Integer id;
     private String processInstanceId; // 流程实例id
     private String siteName;   // 站点名称

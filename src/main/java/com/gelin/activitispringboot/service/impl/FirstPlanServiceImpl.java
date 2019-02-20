@@ -40,7 +40,7 @@ public class FirstPlanServiceImpl implements FirstPlanService {
                 .processInstanceId(processInstance.getId())
                 .singleResult();
         //设置首检申请的待办人
-        task.setAssignee(firstPlan.getCreateUserId().toString());
+        taskService.setAssignee(task.getId(),firstPlan.getCreateUserId().toString());
         baseDao.insertFirstPlan(firstPlan);
         return "申请成功";
     }
