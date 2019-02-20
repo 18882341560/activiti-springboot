@@ -34,7 +34,7 @@ public class ActivitiSpringbootApplicationTests {
     @Test
     public void deploySimpleProcessDefinition() {
         Deployment deploy = repositoryService.createDeployment()
-                .name("请假流程")
+                .name("测试流程")
                 .addClasspathResource("processes/helloworld.bpmn")
                 .deploy();
         System.out.println(deploy);
@@ -68,7 +68,7 @@ public class ActivitiSpringbootApplicationTests {
     @Test
     public void completeMyTask(){
         // 需要任务id
-        taskService.complete("7505");
+        taskService.complete("70005");
         System.out.println("任务完成");
     }
 

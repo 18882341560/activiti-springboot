@@ -4,6 +4,7 @@ import com.gelin.activitispringboot.model.AuditProcess;
 import com.gelin.activitispringboot.model.User;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -20,4 +21,5 @@ public interface AuditProcessService {
     Object startAuditProcess(Integer id,Integer userId) throws Exception;
     List<AuditProcess> AuditProcessAssigneeList(User user) throws Exception;
     Object exam(String remark,Integer type,Integer auditId,User user) throws Exception;
+    void getProcessImage(String processInstanceId,HttpServletResponse response) throws Exception;
 }

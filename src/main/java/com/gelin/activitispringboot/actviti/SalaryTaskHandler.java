@@ -1,7 +1,6 @@
 package com.gelin.activitispringboot.actviti;
 
 import com.gelin.activitispringboot.dao.BaseDao;
-import com.gelin.activitispringboot.model.User;
 import com.gelin.activitispringboot.util.SpringContextUtils;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.delegate.DelegateTask;
@@ -9,20 +8,16 @@ import org.activiti.engine.delegate.TaskListener;
 import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @Auther 葛林
- * @Date 2019/2/17 17:47
- * @describe 请假流程  部门经理任务办理类,需要创建到这个任务节点的时候执行
+ * @Date 2019/2/20/020 17
+ * @Remarks
  */
 @Component
-public class DepartmentManagerTaskHandler implements TaskListener {
-    private static final long serialVersionUID = -9195700150313933425L;
+public class SalaryTaskHandler implements TaskListener {
 
     @Autowired
     private BaseDao baseDao;
@@ -37,15 +32,19 @@ public class DepartmentManagerTaskHandler implements TaskListener {
         if(taskService == null){
             taskService = (TaskService)SpringContextUtils.getBeanByClass(TaskService.class);
         }
+
         String pi = delegateTask.getProcessInstanceId();
         Task task = taskService.createTaskQuery()
                 .processInstanceId(pi)
-                .processDefinitionKey("AuditProcess")
+                .processDefinitionKey("firstPlan")
                 .singleResult();
-        System.out.println("taskName1:"+task.getName());
+        String name = task.getName();
+        if(name.equals("首检申请")){ //创建作业区领导审批任务
 
-        //指定下一个任务的办理人
-        List<User> user = baseDao.findAllUserByRoleName("部门经理");
-        delegateTask.setAssignee(user.get(0).getId().toString());
+        }else if(name.equals("作业区领导审批")){//创建计量监督站审批任务
+
+        }else if(name.equals("计量监督站审批")){//创建计量监督站安排任务
+
+        }
     }
 }

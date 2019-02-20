@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div style="text-align: center">
+    <h1>首检计划填写</h1>
+    作业区:<input type="text" id="chanceName"/><br/>
+    站点:<input type="text" id="siteName"/><br/>
+    详细说明:<textarea type="text" id="detailedDescription"></textarea><br/>
+    <button onclick="sub()">提交</button>
+</div>
+
+<script src="../js/jquery-3.2.0.min.js" type="text/javascript"></script>
+<script>
+    
+    function sub() {
+        var chanceName = $("#chanceName").val();
+        var siteName = $("#siteName").val();
+        var detailedDescription = $("#detailedDescription").val();
+        $.ajax({
+            url :"",
+            method:"post",
+            data:{
+                "chanceName":chanceName,
+                "siteName":siteName,
+                "detailedDescription":detailedDescription,
+            },
+            success:function (data) {
+                alert(data);
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

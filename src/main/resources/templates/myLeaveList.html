@@ -39,7 +39,7 @@
 
         <td th:text="${audit.createTime}"></td>
         <td>
-            <a href="#">查看审核流程</a>
+            <a th:href="${'/audit/getProcessImage?processInstanceId='+audit.processInstanceId}" target="_blank">查看审核流程</a>
             <a href="javascript:;" th:id="${audit.id}" onclick="showRecord(this)">查看审核记录</a>
         </td>
     </tr>

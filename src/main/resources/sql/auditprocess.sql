@@ -111,3 +111,17 @@ INSERT INTO `userrolerelation` VALUES (3, 3, 2);
 INSERT INTO `userrolerelation` VALUES (4, 4, 3);
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+
+CREATE TABLE `firstplan` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `processInstanceId` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `siteName` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `chanceName` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `detailedDescription` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `arrange` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `createUserId` int(11) DEFAULT NULL,
+  `createDateTime` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

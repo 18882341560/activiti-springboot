@@ -11,6 +11,9 @@
     <parameterMap id="record" type="com.gelin.activitispringboot.model.AuditRecords"/>
     <resultMap id="record" type="com.gelin.activitispringboot.model.AuditRecords"/>
 
+    <parameterMap id="firstPlan" type="com.gelin.activitispringboot.model.FirstPlan"/>
+    <resultMap id="firstPlan" type="com.gelin.activitispringboot.model.FirstPlan"/>
+
     <insert id="insertAuditProcess" parameterMap="audit" useGeneratedKeys="true" keyProperty="id">
        insert into auditprocess (
          name,
@@ -127,5 +130,30 @@
     </select>
 
 
+
+
+
+    <!--==================================首检================================-->
+
+
+    <insert id="insertFirstPlan" parameterMap="firstPlan" useGeneratedKeys="true" keyProperty="id">
+        insert into firstplan (
+           processInstanceId,
+           siteName,
+           chanceName,
+           detailedDescription,
+           arrange,
+           createUserId,
+           createDateTime
+        ) values (
+           #{processInstanceId},
+           #{siteName},
+           #{chanceName},
+           #{detailedDescription},
+           #{arrange},
+           #{createUserId},
+           #{createDateTime}
+        )
+    </insert>
 
 </mapper>

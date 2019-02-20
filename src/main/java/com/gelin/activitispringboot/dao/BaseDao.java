@@ -2,6 +2,7 @@ package com.gelin.activitispringboot.dao;
 
 import com.gelin.activitispringboot.model.AuditProcess;
 import com.gelin.activitispringboot.model.AuditRecords;
+import com.gelin.activitispringboot.model.FirstPlan;
 import com.gelin.activitispringboot.model.User;
 import org.springframework.stereotype.Repository;
 
@@ -27,4 +28,10 @@ public interface BaseDao {
     /*审核记录*/
     int insertAuditRecords(AuditRecords auditRecords);
     List<AuditRecords> findAllRecordByAuditId(Integer id);
+
+
+
+    /*=====================首检计划流程========================*/
+
+    int insertFirstPlan(FirstPlan firstPlan);
 }

@@ -155,6 +155,7 @@ public class AuditProcessController {
         return "myLeaveList";
     }
 
+    //审核记录列表
     @RequestMapping("/recordList")
     public String recordList(Integer id,Model model){
         AuditProcess ap = baseDao.findOneAuditProcessById(id);
@@ -162,6 +163,11 @@ public class AuditProcessController {
         model.addAttribute("ap",ap);
         model.addAttribute("list",record);
         return "leaveRecord";
+    }
+
+    @RequestMapping("/getProcessImage")
+    public void getProcessImage(String processInstanceId,HttpServletResponse response) throws Exception {
+       auditProcessService.getProcessImage(processInstanceId,response);
     }
 
 }
