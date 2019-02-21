@@ -21,6 +21,7 @@ public class FirstPlan implements Serializable {
     private String chanceName;   // 作业区名称
     private String detailedDescription;   // 详细说明
     private String arrange; // 初步安排时间
+    private Integer status; //审核状态  1 初始录入 2 审核中 3 审核通过 4 审核不通过
     private Integer createUserId;//创建人
     private String createDateTime; //创建时间
 }

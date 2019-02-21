@@ -34,4 +34,5 @@ public interface BaseDao {
     /*=====================首检计划流程========================*/
 
     int insertFirstPlan(FirstPlan firstPlan);
+    FirstPlan findFirstPlanByProcessInstanceId(String pid);
 }

@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Auther 葛林
@@ -37,17 +39,26 @@ public class SalaryTaskHandler implements TaskListener {
         }
 
         String pi = delegateTask.getProcessInstanceId();
+        //在执行监听之前的任务
         Task task = taskService.createTaskQuery()
                 .processInstanceId(pi)
                 .processDefinitionKey("firstPlan")
                 .singleResult();
         String name = task.getName();
+        List<User> user = new ArrayList<>();
         if(name.equals("首检申请")){ //创建作业区领导审批任务
-            List<User> user = baseDao.findAllUserByRoleName("作业区领导");
+            user = baseDao.findAllUserByRoleName("作业区领导");
         }else if(name.equals("作业区领导审批")){//创建计量监督站审批任务
-
+            user = baseDao.findAllUserByRoleName("计量监督站领导");
         }else if(name.equals("计量监督站审批")){//创建计量监督站安排任务
-
+            user = baseDao.findAllUserByRoleName("计量监督站领导");
         }
+        delegateTask.addCandidateUsers(getUsers(user));
+    }
+
+    private List<String> getUsers(List<User> user){
+        return user.stream()
+                .map(u -> u.getId().toString())
+                .collect(Collectors.toList());
     }
 }

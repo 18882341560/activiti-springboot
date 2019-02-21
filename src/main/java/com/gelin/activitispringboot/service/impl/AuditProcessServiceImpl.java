@@ -112,9 +112,7 @@ public class AuditProcessServiceImpl implements AuditProcessService {
                         .singleResult();
           if(pi != null){
              AuditProcess ap = baseDao.findOneAuditProcessByProcessInstanceId(pi.getId());
-             if(ap != null){
-                 auditProcessList.add(ap);
-             }
+             if(ap != null) auditProcessList.add(ap);
           }
         });
         return auditProcessList;

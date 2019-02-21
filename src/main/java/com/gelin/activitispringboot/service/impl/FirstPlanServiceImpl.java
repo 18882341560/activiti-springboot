@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Auther 葛林
@@ -40,8 +42,27 @@ public class FirstPlanServiceImpl implements FirstPlanService {
                 .processInstanceId(processInstance.getId())
                 .singleResult();
         //设置首检申请的待办人
-        taskService.setAssignee(task.getId(),firstPlan.getCreateUserId().toString());
+        taskService.addCandidateUser(task.getId(),firstPlan.getCreateUserId().toString());
         baseDao.insertFirstPlan(firstPlan);
         return "申请成功";
+    }
+
+    @Override
+    public List<FirstPlan> myAgencyTask(Integer userId) {
+        List<Task> taskList = taskService.createTaskQuery()
+                .processDefinitionKey("FirstPlan")
+                .taskCandidateUser(userId.toString())
+                .list();
+        List<FirstPlan> list = new ArrayList<>();
+        taskList.forEach(t->{
+            ProcessInstance pi = runtimeService.createProcessInstanceQuery()
+                          .processInstanceId(t.getProcessInstanceId())
+                          .singleResult();
+            if(pi != null){
+                 FirstPlan firstPlan = baseDao.findFirstPlanByProcessInstanceId(pi.getId());
+                 if(firstPlan != null) list.add(firstPlan);
+            }
+        });
+        return list;
     }
 }

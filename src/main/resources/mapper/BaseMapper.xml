@@ -144,7 +144,8 @@
            detailedDescription,
            arrange,
            createUserId,
-           createDateTime
+           createDateTime,
+           status
         ) values (
            #{processInstanceId},
            #{siteName},
@@ -152,8 +153,13 @@
            #{detailedDescription},
            #{arrange},
            #{createUserId},
-           #{createDateTime}
+           #{createDateTime},
+           #{status}
         )
     </insert>
+
+    <select id="findFirstPlanByProcessInstanceId" resultMap="firstPlan">
+        select * from firstplan where processInstanceId = #{pid}
+    </select>
 
 </mapper>
