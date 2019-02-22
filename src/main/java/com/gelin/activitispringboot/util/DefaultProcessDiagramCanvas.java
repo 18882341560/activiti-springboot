@@ -87,7 +87,8 @@ public class DefaultProcessDiagramCanvas {
   protected static Color EVENT_COLOR = new Color(255, 255, 255);
   protected static Color CONNECTION_COLOR = new Color(88, 88, 88);
   protected static Color CONDITIONAL_INDICATOR_COLOR = new Color(255, 255, 255);
-  protected static Color HIGHLIGHT_COLOR = Color.RED;
+//  protected static Color HIGHLIGHT_COLOR = Color.RED;
+  protected static Color HIGHLIGHT_COLOR = new Color(131,111,255);
   protected static Color LABEL_COLOR = new Color(112, 146, 190);
   protected static Color TASK_BORDER_COLOR = new Color(187, 187, 187);
   protected static Color EVENT_BORDER_COLOR = new Color(88, 88, 88);
@@ -1071,7 +1072,8 @@ public class DefaultProcessDiagramCanvas {
     Paint originalPaint = g.getPaint();
     Stroke originalStroke = g.getStroke();
 
-    g.setPaint(HIGHLIGHT_COLOR);
+//    g.setPaint(HIGHLIGHT_COLOR);
+    g.setPaint(new Color(255,87,34));
     g.setStroke(THICK_TASK_BORDER_STROKE);
 
     RoundRectangle2D rect = new RoundRectangle2D.Double(x, y, width, height, 20, 20);

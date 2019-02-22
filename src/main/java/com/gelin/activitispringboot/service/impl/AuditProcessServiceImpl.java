@@ -7,6 +7,7 @@ import com.gelin.activitispringboot.model.User;
 import com.gelin.activitispringboot.service.AuditProcessService;
 import com.gelin.activitispringboot.util.BpmsActivityTypeEnum;
 import com.gelin.activitispringboot.util.DateUtils;
+import com.gelin.activitispringboot.util.DefaultProcessDiagramGenerator;
 import com.gelin.activitispringboot.util.UtilMisc;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowNode;
@@ -267,8 +268,9 @@ public class AuditProcessServiceImpl implements AuditProcessService {
         List<String> flowIds = this.getExecutedFlows(bpmnModel, hisList);
 
         // 使用默认配置获得流程图表生成器，并生成追踪图片字符流
-        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
-        ProcessDiagramGenerator processDiagramGenerator = processEngine.getProcessEngineConfiguration().getProcessDiagramGenerator();
+//        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+//        ProcessDiagramGenerator processDiagramGenerator = processEngine.getProcessEngineConfiguration().getProcessDiagramGenerator();
+        ProcessDiagramGenerator processDiagramGenerator = new DefaultProcessDiagramGenerator();
         InputStream imageStream = processDiagramGenerator.generateDiagram(
                 bpmnModel,
                 "png",
