@@ -42,7 +42,7 @@ public class SalaryTaskHandler implements TaskListener {
         //在执行监听之前的任务
         Task task = taskService.createTaskQuery()
                 .processInstanceId(pi)
-                .processDefinitionKey("firstPlan")
+                .processDefinitionKey("FirstPlan")
                 .singleResult();
         String name = task.getName();
         List<User> user = new ArrayList<>();

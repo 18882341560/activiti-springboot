@@ -37,19 +37,47 @@
         <td th:if="${fp.status==4}">审核不通过</td>
 
         <td>
-            <a href="#" th:if="${fp.status==1}" th:id="${fp.id}" onclick="startProcess(this)">提交申请</a>
-            <a href="#" th:if="${fp.status==2}" th:id="${fp.id}">审核</a>
-            <a href="#">查看审核记录</a>
+            <a href="#" th:if="${fp.status==1}" th:id="${fp.id}" onclick="applicationSubmission(this)">提交申请</a>
+            <a href="#" th:if="${fp.status==2}" th:id="${fp.id}" onclick="examHtml(this)">审核</a>
+            <a href="#" th:if="${fp.status==3}" th:id="${fp.id}" onclick="scheduleTime(this)">安排首检时间</a>
         </td>
     </tr>
     </tbody>
 </table>
 <script src="../js/jquery-3.2.0.min.js" type="text/javascript"></script>
 <script>
-    function startProcess(t) {
+
+    function scheduleTime(t) {
+        var id = $(t).attr("id");
+        var arrange = "";
+        arrange = prompt("请输入安排时间");
+        if(arrange !== ''){
+            $.ajax({
+                url :"/first/arrange",
+                method:"post",
+                data:{
+                    "id":id,
+                    "arrange":arrange
+                },
+                success:function (data) {
+                    alert(data);
+                }
+            });
+
+        }else {
+            alert("安排时间不能为空");
+        }
+    }
+
+    function examHtml(t) {
+        var id = $(t).attr("id");
+        window.location.href = "/first/examHtml?id="+id;
+    }
+
+    function applicationSubmission(t) {
        var id = $(t).attr("id");
         $.ajax({
-            url :"",
+            url :"/first/applyFirstPlan",
             method:"post",
             data:{
                 "id":id

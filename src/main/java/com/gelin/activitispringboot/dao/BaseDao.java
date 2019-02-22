@@ -1,9 +1,6 @@
 package com.gelin.activitispringboot.dao;
 
-import com.gelin.activitispringboot.model.AuditProcess;
-import com.gelin.activitispringboot.model.AuditRecords;
-import com.gelin.activitispringboot.model.FirstPlan;
-import com.gelin.activitispringboot.model.User;
+import com.gelin.activitispringboot.model.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,5 +31,10 @@ public interface BaseDao {
     /*=====================首检计划流程========================*/
 
     int insertFirstPlan(FirstPlan firstPlan);
+    FirstPlan findOneFirstPlanById(Integer id);
     FirstPlan findFirstPlanByProcessInstanceId(String pid);
+    int updateFirstPlan(FirstPlan firstPlan);
+    int insertFirstRecords(FirstRecords firstRecords);
+    List<FirstRecords> findFirstRecordList(Integer firstPlanId);
+    List<FirstPlan> findFirstPlanByCreateUserId(Integer id);
 }

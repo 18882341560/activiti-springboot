@@ -14,6 +14,9 @@
     <parameterMap id="firstPlan" type="com.gelin.activitispringboot.model.FirstPlan"/>
     <resultMap id="firstPlan" type="com.gelin.activitispringboot.model.FirstPlan"/>
 
+    <parameterMap id="firstRecord" type="com.gelin.activitispringboot.model.FirstRecords"/>
+    <resultMap id="firstRecord" type="com.gelin.activitispringboot.model.FirstRecords"/>
+
     <insert id="insertAuditProcess" parameterMap="audit" useGeneratedKeys="true" keyProperty="id">
        insert into auditprocess (
          name,
@@ -158,8 +161,69 @@
         )
     </insert>
 
+    <select id="findOneFirstPlanById" resultMap="firstPlan">
+        select * from firstplan where id = #{id}
+    </select>
+
     <select id="findFirstPlanByProcessInstanceId" resultMap="firstPlan">
         select * from firstplan where processInstanceId = #{pid}
+    </select>
+
+    <insert id="insertFirstRecords" parameterMap="firstRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into firstrecords (
+           firstPlanId,
+           taskId,
+           remarks,
+           examStatus,
+           operationUserId,
+           operationDate
+        ) values (
+           #{firstPlanId},
+           #{taskId},
+           #{remarks},
+           #{examStatus},
+           #{operationUserId},
+           #{operationDate}
+        )
+    </insert>
+
+    <update id="updateFirstPlan" parameterMap="firstPlan">
+        update firstplan
+        <set>
+            <if test="processInstanceId != null">
+                processInstanceId = #{processInstanceId},
+            </if>
+            <if test="siteName != null">
+                siteName = #{siteName},
+            </if>
+            <if test="chanceName != null">
+                chanceName = #{chanceName},
+            </if>
+            <if test="detailedDescription != null">
+                detailedDescription = #{detailedDescription},
+            </if>
+            <if test="arrange != null">
+                arrange = #{arrange},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="createUserId != null">
+                createUserId = #{createUserId},
+            </if>
+            <if test="createDateTime != null">
+                createDateTime = #{createDateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="findFirstRecordList" resultMap="firstRecord">
+        select * from firstrecords where firstPlanId = #{firstPlanId}
+    </select>
+
+    <select id="findFirstPlanByCreateUserId" resultMap="firstPlan">
+        select * from firstplan where createUserId = #{id}
     </select>
 
 </mapper>
