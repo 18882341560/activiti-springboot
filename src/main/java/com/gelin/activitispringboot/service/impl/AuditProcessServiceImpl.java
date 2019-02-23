@@ -25,6 +25,7 @@ import org.activiti.image.ProcessDiagramGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -57,6 +58,31 @@ public class AuditProcessServiceImpl implements AuditProcessService {
     private BaseDao baseDao;
 
     @Override
+    public void showView(HttpServletResponse response, String id) throws Exception {
+        response.setContentType("image/jpeg/jpg/png/gif/bmp/tiff/svg");
+        //两个资源文件 名称  一个是png结尾的图片名称，一个是bpmn结尾的流程资源
+        List<String> resourceNames = repositoryService.getDeploymentResourceNames(id);
+        String resourceName = "";
+        if(resourceNames != null && resourceNames.size()>0){
+            for (String name:resourceNames) {
+                if(name.indexOf(".png")>=0){
+                    resourceName = name;
+                }
+            }
+        }
+        //activiti的api，根据部署id，资源名称，查找资源
+        InputStream is = repositoryService.getResourceAsStream(id, resourceName);
+        OutputStream os = response.getOutputStream();
+        byte[] b = new byte[1024];
+        while(is.read(b)!= -1) {
+            os.write(b);
+        }
+        is.close();
+        os.flush();
+        os.close();
+    }
+
+    @Override
     public Object login(User user, HttpSession session) throws Exception {
         User userLogin = baseDao.findOneByLogin(user);
         if(userLogin != null){
@@ -79,6 +105,7 @@ public class AuditProcessServiceImpl implements AuditProcessService {
 
     @Override
     public Object delDeployById(String id) throws Exception {
+        //true 级联删除
         repositoryService.deleteDeployment(id,true);
         return "删除成功";
     }
@@ -92,7 +119,7 @@ public class AuditProcessServiceImpl implements AuditProcessService {
                 .processInstanceId(pi.getId())
                 .singleResult();
 
-        //设置任务办理人
+        //设置任务办理人,为当前提交人
         taskService.setAssignee(task.getId(),auditProcess.getCreateUserId().toString());
         auditProcess.setProcessInstanceId(pi.getId());
         baseDao.insertAuditProcess(auditProcess);
@@ -101,19 +128,15 @@ public class AuditProcessServiceImpl implements AuditProcessService {
 
     @Override
     public List<AuditProcess> AuditProcessAssigneeList(User user) throws Exception {
+        //查询我当前有哪些待办理的任务
         List<Task> taskList = taskService.createTaskQuery()
                 .processDefinitionKey("AuditProcess")
                 .taskAssignee(user.getId().toString())
                 .list();
         List<AuditProcess> auditProcessList = new ArrayList<>();
-        taskList.forEach( a->{
-          ProcessInstance pi = runtimeService.createProcessInstanceQuery()
-                        .processInstanceId(a.getProcessInstanceId())
-                        .singleResult();
-          if(pi != null){
-             AuditProcess ap = baseDao.findOneAuditProcessByProcessInstanceId(pi.getId());
+        taskList.forEach( t->{
+             AuditProcess ap = baseDao.findOneAuditProcessByProcessInstanceId(t.getProcessInstanceId());
              if(ap != null) auditProcessList.add(ap);
-          }
         });
         return auditProcessList;
     }
@@ -121,15 +144,12 @@ public class AuditProcessServiceImpl implements AuditProcessService {
     @Override
     public Object startAuditProcess(Integer id,Integer userId) throws Exception {
 
-//        ProcessInstance pi = runtimeService.startProcessInstanceByKey("AuditProcess");
         AuditProcess ap = baseDao.findOneAuditProcessById(id);
+
         //查询第一个任务，其实就是请假申请任务
         Task task = taskService.createTaskQuery()
                 .processInstanceId(ap.getProcessInstanceId())
                 .singleResult();
-//
-//        //设置任务办理人
-//        taskService.setAssignee(task.getId(),userId.toString());
 
         //完成任务
         taskService.complete(task.getId());
@@ -145,21 +165,25 @@ public class AuditProcessServiceImpl implements AuditProcessService {
 
     @Override
     public Object exam(String remark, Integer type,Integer auditId, User user) throws Exception {
+        //查找请假
         AuditProcess auditProcess = baseDao.findOneAuditProcessById(auditId);
+        //设置更改审核请假状态
         AuditProcess ap = AuditProcess.builder()
                 .id(auditId)
                 .build();
+        //审核记录
         AuditRecords auditRecords = AuditRecords.builder()
                 .auditProcessId(auditId)
                 .examineUserId(user.getId())
                 .remarks(remark)
                 .examineTime(DateUtils.getLocalDateTimeByYYYYMMDDHHmmss())
                 .build();
+
+        //当前任务
         Task task = taskService.createTaskQuery()
                 .processInstanceId(auditProcess.getProcessInstanceId())
                 .singleResult();
 
-//        taskService.setAssignee(task.getId(),user.getId().toString());
         //这里设置流程变量
         Map<String,Object> map = new HashMap<>();
 
@@ -184,52 +208,15 @@ public class AuditProcessServiceImpl implements AuditProcessService {
             taskService.setAssignee(task.getId(),auditProcess.getCreateUserId().toString());
             ap.setStatus(1);
         }
-
-//        if(task.getName().equals("部门经理审批")){
-//            if(type == 1){//通过
-//                ap.setStatus(2);
-//                auditRecords.setExamineStatus(1);
-//                map.put("auditType","批准");
-//                taskService.complete(task.getId(),map);
-//            }else { //驳回
-//                ap.setStatus(4);
-//                auditRecords.setExamineStatus(2);
-//                map.put("auditType","驳回");
-//                taskService.complete(task.getId(),map);
-//                //返回开始申请流程，设置任务的办理人,还要设置请假单的状态
-//                task = taskService.createTaskQuery()
-//                        .processInstanceId(auditProcess.getProcessInstanceId())
-//                        .singleResult();
-//                taskService.setAssignee(task.getId(),auditProcess.getCreateUserId().toString());
-//                ap.setStatus(1);
-//            }
-//
-//        }else if(task.getName().equals("总经理审批")){
-//            if(type == 1){//通过
-//                ap.setStatus(3);
-//                auditRecords.setExamineStatus(1);
-//                map.put("auditType","批准");
-//                taskService.complete(task.getId(),map);
-//            }else { //驳回
-//                ap.setStatus(4);
-//                auditRecords.setExamineStatus(2);
-//                map.put("auditType","驳回");
-//                taskService.complete(task.getId(),map);
-//                //返回开始申请流程，设置任务的办理人,还要设置请假单的状态
-//                task = taskService.createTaskQuery()
-//                        .processInstanceId(auditProcess.getProcessInstanceId())
-//                        .singleResult();
-//                taskService.setAssignee(task.getId(),auditProcess.getCreateUserId().toString());
-//                ap.setStatus(1);
-//            }
-//        }
-
         baseDao.updateAuditProcess(ap);
         baseDao.insertAuditRecords(auditRecords);
-
         return "审核成功";
     }
 
+    @Override
+    public List<AuditProcess> findMyAuditList(User user) throws Exception {
+        return baseDao.findAllByCreateUserId(user.getId());
+    }
 
     @Override
     public void getProcessImage(String processInstanceId, HttpServletResponse response) throws Exception {
@@ -244,6 +231,7 @@ public class AuditProcessServiceImpl implements AuditProcessService {
         if(historicProcessInstance == null){
              throw new RuntimeException("历史流程实例为空");
         }
+
         // 获取流程中已经执行的节点，按照执行先后顺序排序
         List<HistoricActivityInstance> hisList =
                 historyService.createHistoricActivityInstanceQuery()
@@ -251,7 +239,8 @@ public class AuditProcessServiceImpl implements AuditProcessService {
                         .orderByHistoricActivityInstanceId()
                         .asc()
                         .list();
-        // 构造已执行的节点ID集合,可以判断endtime 不为空的是已经执行了的，todo 这里应该还要与当前应该执行的任务比较，如果后面审核有驳回的，这个节点应该从新计算
+
+        // 构造已执行的节点ID集合,可以判断endtime 不为空的是已经执行了的
         List<String> executedActivityIdList = new ArrayList<String>();
         for (HistoricActivityInstance activityInstance : hisList) {
             if(activityInstance.getEndTime() != null){
@@ -292,6 +281,21 @@ public class AuditProcessServiceImpl implements AuditProcessService {
     }
 
 
+    @Override
+    public void examLeaveHtml(Integer id, Model model) throws Exception {
+        AuditProcess process = baseDao.findOneAuditProcessById(id);
+        model.addAttribute("audit",process);
+    }
+
+    @Override
+    public void recordList(Integer id,Model model) throws Exception {
+        AuditProcess ap = baseDao.findOneAuditProcessById(id);
+        List<AuditRecords> record = baseDao.findAllRecordByAuditId(id);
+        model.addAttribute("ap",ap);
+        model.addAttribute("list",record);
+    }
+
+    //获取所有执行的连线的id
     private List<String> getExecutedFlows(BpmnModel bpmnModel, List<HistoricActivityInstance> historicActivityInstances) {
         // 流转线ID集合
         List<String> flowIdList = new ArrayList<String>();
