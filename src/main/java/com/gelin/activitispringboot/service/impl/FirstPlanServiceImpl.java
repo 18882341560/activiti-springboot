@@ -14,8 +14,10 @@ import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,27 +48,23 @@ public class FirstPlanServiceImpl implements FirstPlanService {
         Task task = taskService.createTaskQuery()
                 .processInstanceId(processInstance.getId())
                 .singleResult();
-        //设置首检申请的待办人
+        //设置首检申请的待办人，使用任务组的方式，以后推荐使用这种方式
         taskService.addCandidateUser(task.getId(),firstPlan.getCreateUserId().toString());
         baseDao.insertFirstPlan(firstPlan);
         return "申请成功";
     }
 
     @Override
-    public List<FirstPlan> myAgencyTask(Integer userId) {
+    public List<FirstPlan> myAgencyTask(Integer userId) throws Exception{
         List<Task> taskList = taskService.createTaskQuery()
                 .processDefinitionKey("FirstPlan")
                 .taskCandidateUser(userId.toString())
                 .list();
         List<FirstPlan> list = new ArrayList<>();
         taskList.forEach(t->{
-            ProcessInstance pi = runtimeService.createProcessInstanceQuery()
-                          .processInstanceId(t.getProcessInstanceId())
-                          .singleResult();
-            if(pi != null){
-                 FirstPlan firstPlan = baseDao.findFirstPlanByProcessInstanceId(pi.getId());
+                 FirstPlan firstPlan = baseDao.findFirstPlanByProcessInstanceId(t.getProcessInstanceId());
                  if(firstPlan != null) list.add(firstPlan);
-            }
+
         });
         return list;
     }
@@ -95,8 +93,18 @@ public class FirstPlanServiceImpl implements FirstPlanService {
     }
 
     @Override
+    public void examHtml(Integer id, Model model) throws Exception {
+        FirstPlan firstPlan = baseDao.findOneFirstPlanById(id);
+        List<FirstRecords> firstRecordList = baseDao.findFirstRecordList(id);
+        model.addAttribute("first",firstPlan);
+        model.addAttribute("list",firstRecordList);
+    }
+
+
+    @Override
     public Object exam(String remarks, Integer type,Integer id,User user) throws Exception {
 
+        //审核记录日志
         FirstRecords firstRecords = FirstRecords.builder()
                 .firstPlanId(id)
                 .examStatus(type)
@@ -105,6 +113,7 @@ public class FirstPlanServiceImpl implements FirstPlanService {
                 .remarks(remarks)
                 .build();
 
+        //首检计划的状态修改
         FirstPlan fp = FirstPlan.builder()
                 .id(id)
                 .build();
@@ -116,6 +125,7 @@ public class FirstPlanServiceImpl implements FirstPlanService {
                 .processInstanceId(firstPlan.getProcessInstanceId())
                 .singleResult();
 
+        //当前任务的名称
         String taskName = task.getName();
 
         //这里设置流程变量
@@ -150,5 +160,12 @@ public class FirstPlanServiceImpl implements FirstPlanService {
         taskService.complete(task.getId());
         baseDao.updateFirstPlan(firstPlan);
         return "安排成功";
+    }
+
+    @Override
+    public void myFirstList(HttpSession session, Model model) throws Exception {
+        User user = (User) session.getAttribute("user");
+        List<FirstPlan> list = baseDao.findFirstPlanByCreateUserId(user.getId());
+        model.addAttribute("list",list);
     }
 }
