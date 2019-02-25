@@ -66,6 +66,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultProcessDiagramCanvas {
 
+
   protected static final Logger LOGGER = LoggerFactory.getLogger(DefaultProcessDiagramCanvas.class);
   public enum SHAPE_TYPE {Rectangle, Rhombus, Ellipse}
 
