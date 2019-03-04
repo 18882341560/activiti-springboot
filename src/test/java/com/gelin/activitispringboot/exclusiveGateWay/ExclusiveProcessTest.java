@@ -1,4 +1,4 @@
-package com.gelin.activitispringboot.group;
+package com.gelin.activitispringboot.exclusiveGateWay;
 
 import com.gelin.activitispringboot.ActivitiSpringbootApplication;
 import com.google.common.collect.Maps;
@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ActivitiSpringbootApplication.class)
-public class GroupUsersProcessTest {
+public class ExclusiveProcessTest {
 
 
     @Resource
@@ -40,8 +40,8 @@ public class GroupUsersProcessTest {
     @Test
     public void deploySimpleProcessDefinition() {
         Deployment deploy = repositoryService.createDeployment()
-                .name("组任务测试流程")
-                .addClasspathResource("processes/users/users.bpmn")
+                .name("排他网关测试流程")
+                .addClasspathResource("processes/exclusiveGateWay/exclusive.bpmn")
                 .deploy();
         System.out.println("deployId:"+deploy.getId());
     }
@@ -50,43 +50,15 @@ public class GroupUsersProcessTest {
     // 启动流程实例
     @Test
     public void startProcess(){
-
-        //流程变量
-        Map<String,Object> map = Maps.newHashMap();
-        map.put("users","老胡,老李,老王");
-
-        // 使用 key 来启动好处 默认寻找最新版本，版本多了的话
-        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("usersProcess",map);
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("exclusiveProcess");
         System.out.println("processInstanceId:"+processInstance.getId());
-    }
-
-
-    //查找我当前的待办任务
-    @Test
-    public void findMyTask(){
-        List<Task> list = taskService.createTaskQuery() // 创建人物查询对象
-                .processDefinitionKey("usersProcess")
-                .taskAssignee("葛林")  //指定个人任务查询
-                .list();
-
-        if(list != null && list.size()>0){
-            list.forEach(task -> {
-                System.out.println("任务ID:"+task.getId());
-                System.out.println("任务名称:"+task.getName());
-                System.out.println("任务的创建时间:"+task.getCreateTime());
-                System.out.println("任务的办理人:"+task.getAssignee());
-                System.out.println("流程实例ID:"+task.getProcessInstanceId());
-                System.out.println("执行对象ID:"+task.getExecutionId());
-                System.out.println("执行定义ID:"+task.getProcessDefinitionId());
-            });
-        }
     }
 
 
     @Test
     public void findUsersTask(){
         List<Task> list = taskService.createTaskQuery() // 创建人物查询对象
-                .processDefinitionKey("usersProcess")
+                .processDefinitionKey("exclusiveProcess")
                 .taskCandidateUser("老王")
                 .list();
 
