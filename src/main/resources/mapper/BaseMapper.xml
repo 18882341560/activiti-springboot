@@ -226,4 +226,19 @@
         select * from firstplan where createUserId = #{id}
     </select>
 
+
+    <insert id="insertProFile" useGeneratedKeys="true" keyProperty="id">
+        insert into flowpngfile (
+           processInstanceId,
+           fileUrl
+        )values (
+           #{processInstanceId},
+           #{fileUrl}
+        )
+    </insert>
+
+    <select id="findOneProFlowPng" resultType="com.gelin.activitispringboot.model.ProFlowPng">
+        select * from flowpngfile where processInstanceId = #{processInstanceId}
+    </select>
+
 </mapper>

@@ -28,4 +28,5 @@ public interface AuditProcessService {
     void getProcessImage(String processInstanceId,HttpServletResponse response) throws Exception;
     void recordList(Integer id,Model model) throws Exception;
     void examLeaveHtml(Integer id,Model model) throws Exception;
+    void getProcessImage2(String processInstanceId,HttpServletResponse response) throws Exception;
 }

@@ -1,6 +1,7 @@
 package com.gelin.activitispringboot.dao;
 
 import com.gelin.activitispringboot.model.*;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -37,4 +38,10 @@ public interface BaseDao {
     int insertFirstRecords(FirstRecords firstRecords);
     List<FirstRecords> findFirstRecordList(Integer firstPlanId);
     List<FirstPlan> findFirstPlanByCreateUserId(Integer id);
+
+    /*======================================================*/
+
+    int insertProFile(ProFlowPng proFlowPng);
+    ProFlowPng findOneProFlowPng(String processInstanceId);
+
 }

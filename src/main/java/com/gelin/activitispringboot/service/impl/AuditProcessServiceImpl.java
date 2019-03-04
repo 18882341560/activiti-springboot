@@ -3,12 +3,11 @@ package com.gelin.activitispringboot.service.impl;
 import com.gelin.activitispringboot.dao.BaseDao;
 import com.gelin.activitispringboot.model.AuditProcess;
 import com.gelin.activitispringboot.model.AuditRecords;
+import com.gelin.activitispringboot.model.ProFlowPng;
 import com.gelin.activitispringboot.model.User;
 import com.gelin.activitispringboot.service.AuditProcessService;
-import com.gelin.activitispringboot.util.BpmsActivityTypeEnum;
-import com.gelin.activitispringboot.util.DateUtils;
-import com.gelin.activitispringboot.util.DefaultProcessDiagramGenerator;
-import com.gelin.activitispringboot.util.UtilMisc;
+import com.gelin.activitispringboot.util.*;
+import com.google.common.collect.Lists;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.SequenceFlow;
@@ -27,13 +26,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 import java.util.zip.ZipInputStream;
 
@@ -57,6 +56,8 @@ public class AuditProcessServiceImpl implements AuditProcessService {
     private HistoryService historyService;
     @Autowired
     private BaseDao baseDao;
+    @Resource
+    private ManagementService managementService;
 
     @Override
     public void showView(HttpServletResponse response, String id) throws Exception {
@@ -107,7 +108,9 @@ public class AuditProcessServiceImpl implements AuditProcessService {
     @Override
     public Object delDeployById(String id) throws Exception {
         //true 级联删除
-        repositoryService.deleteDeployment(id,true);
+//        repositoryService.deleteDeployment(id,true);
+//        repositoryService.suspendProcessDefinitionByKey("AuditProcess",true,null);
+        repositoryService.activateProcessDefinitionByKey("AuditProcess",true,null);
         return "删除成功";
     }
 
@@ -384,4 +387,113 @@ public class AuditProcessServiceImpl implements AuditProcessService {
         return flowIdList;
     }
 
+
+    @Override
+    public void getProcessImage2(String processInstanceId, HttpServletResponse response) throws Exception {
+
+        if(Objects.isNull(processInstanceId)){
+            throw new RuntimeException("历史流程实例为空");
+        }
+
+        //设置不缓存
+        response.setHeader("Pragma", "No-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", 0);
+
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .singleResult();
+
+        List<String> actIds = Lists.newArrayList();
+        List<String> flowIds = Lists.newArrayList();
+        BpmnModel bpmnModel = null;
+
+        ProFlowPng proFlowPng = baseDao.findOneProFlowPng(processInstanceId);
+
+        //判断流程是否结束
+        if(Objects.isNull(processInstance)){
+
+
+
+            if(Objects.isNull(proFlowPng)){
+            //获取历史流程实例
+                HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
+                        .processInstanceId(processInstanceId)
+                        .singleResult();
+                if(Objects.isNull(historicProcessInstance)){
+                    throw new RuntimeException("历史流程实例为空");
+                }
+
+                List<HistoricActivityInstance> hisList =
+                        historyService.createHistoricActivityInstanceQuery()
+                                .processInstanceId(processInstanceId)
+                                .orderByHistoricActivityInstanceId()
+                                .asc()
+                                .list();
+
+                // 构造已执行的节点ID集合
+                for (HistoricActivityInstance activityInstance : hisList) {
+                    actIds.add(activityInstance.getActivityId());
+                }
+
+                bpmnModel = repositoryService
+                        .getBpmnModel(historicProcessInstance.getProcessDefinitionId());
+
+                flowIds = this.getExecutedFlows(bpmnModel, hisList);
+            }
+        }else {
+            //查询当前应该执行的活动节点
+            Task task = taskService.createTaskQuery()
+                    .processInstanceId(processInstanceId)
+                    .singleResult();
+
+            Execution execution = runtimeService.createExecutionQuery()
+                    .executionId(task.getExecutionId())
+                    .singleResult();
+
+            actIds.add(execution.getActivityId());
+
+            // 获取bpmnModel
+            bpmnModel = repositoryService
+                    .getBpmnModel(processInstance.getProcessDefinitionId());
+        }
+
+
+
+
+
+        ProcessDiagramGenerator processDiagramGenerator = new FangfaProcessDiagramGenerator();
+        InputStream imageStream = null;
+        if(Objects.isNull(proFlowPng)){
+            ProFlowPng proFlowPng1 = new ProFlowPng();
+            proFlowPng1.setProcessInstanceId(processInstanceId);
+            proFlowPng1.setFileUrl("D:/1.png");
+            baseDao.insertProFile(proFlowPng1);
+            FileCopyUtils.copy(imageStream,new FileOutputStream("D:/1.png"));
+            imageStream = processDiagramGenerator.generateDiagram(
+                    bpmnModel,
+                    "png",
+                    actIds,
+                    flowIds,
+                    "宋体",
+                    "微软雅黑",
+                    "黑体",
+                    null,
+                    2.0);
+        }else {
+            File file = new File(proFlowPng.getFileUrl());
+            imageStream = new FileInputStream(file);
+        }
+
+        response.setContentType("image/png");
+        OutputStream os = response.getOutputStream();
+        int bytesRead = 0;
+        byte[] buffer = new byte[8192];
+        while ((bytesRead = imageStream.read(buffer, 0, 8192)) != -1) {
+            os.write(buffer, 0, bytesRead);
+        }
+        os.close();
+        imageStream.close();
+
+    }
 }

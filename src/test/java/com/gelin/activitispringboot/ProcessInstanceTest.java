@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -29,13 +30,13 @@ import java.util.zip.ZipInputStream;
 @SpringBootTest(classes = ActivitiSpringbootApplication.class)
 public class ProcessInstanceTest {
 
-    @Autowired
+    @Resource
     private RepositoryService repositoryService;
-    @Autowired
+    @Resource
     private RuntimeService runtimeService; // 与正在执行的流程实例和执行对象相关的
-    @Autowired
+    @Resource
     private TaskService taskService;
-    @Autowired
+    @Resource
     private HistoryService historyService; // 历史相关的
 
 

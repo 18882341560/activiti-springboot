@@ -8,46 +8,6 @@
 
 <h1>请假任务列表</h1>
 <a href="/audit/addLeave">申请请假</a>
-<!--<table style="width: 1200px;text-align: center;">-->
-    <!--<thead>-->
-    <!--<tr>-->
-        <!--<td width="200px">id</td>-->
-        <!--<td width="200px">请假人</td>-->
-        <!--<td width="200px">请假天数</td>-->
-        <!--<td width="200px">请假事由</td>-->
-        <!--<td width="200px">请假时间</td>-->
-        <!--<td width="200px">请假备注</td>-->
-        <!--<td width="200px">请假状态</td>-->
-        <!--<td width="200px">创建时间</td>-->
-        <!--<td width="300px">操作</td>-->
-    <!--</tr>-->
-
-    <!--</thead>-->
-
-    <!--<tbody>-->
-    <!--<tr th:each="audit:${list}">-->
-        <!--<td th:text="${audit.id}"></td>-->
-        <!--<td th:text="${audit.name}"></td>-->
-        <!--<td th:text="${audit.leaveDay}"></td>-->
-        <!--<td th:text="${audit.cause}"></td>-->
-        <!--<td th:text="${audit.leaveTime}"></td>-->
-        <!--<td th:text="${audit.remarks}"></td>-->
-
-        <!--<td th:if="${audit.status==1}">初始录入</td>-->
-        <!--<td th:if="${audit.status==2}">审批中</td>-->
-        <!--<td th:if="${audit.status==3}">审核通过</td>-->
-        <!--<td th:if="${audit.status==4}">审核不通过</td>-->
-
-        <!--<td th:text="${audit.createTime}"></td>-->
-        <!--<td>-->
-            <!--<a href="#" th:if="${audit.status==1}">修改</a>-->
-            <!--<a href="#" th:if="${audit.status==1}">删除</a>-->
-            <!--<a href="#" th:if="${audit.status==1}" th:id="${audit.id}" onclick="startProcess(this)">申请请假</a>-->
-            <!--<a href="#">查看审核记录</a>-->
-        <!--</td>-->
-    <!--</tr>-->
-    <!--</tbody>-->
-<!--</table>-->
 <script src="../js/jquery-3.2.0.min.js" type="text/javascript"></script>
 <script>
     function startProcess(t) {

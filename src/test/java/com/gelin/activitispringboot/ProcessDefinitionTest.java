@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,11 +25,11 @@ import java.util.zip.ZipInputStream;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ActivitiSpringbootApplication.class)
 public class ProcessDefinitionTest {
-    @Autowired
+    @Resource
     private RepositoryService repositoryService;
-    @Autowired
+    @Resource
     private RuntimeService runtimeService; // 与正在执行的流程实例和执行对象相关的
-    @Autowired
+    @Resource
     private TaskService taskService;
 
    /**

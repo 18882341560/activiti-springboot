@@ -199,7 +199,7 @@ public class AuditProcessController {
      */
     @RequestMapping("/getProcessImage")
     public void getProcessImage(String processInstanceId,HttpServletResponse response) throws Exception {
-       auditProcessService.getProcessImage(processInstanceId,response);
+       auditProcessService.getProcessImage2(processInstanceId,response);
     }
 
 }
