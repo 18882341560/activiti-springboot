@@ -1,40 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/test" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1551702895018" name="" targetNamespace="http://www.activiti.org/test" typeLanguage="http://www.w3.org/2001/XMLSchema">
   <process id="exclusiveProcess" isClosed="false" isExecutable="true" name="exclusive_process" processType="None">
-
     <extensionElements>
-      <activiti:executionListener event="start" class="com.gelin.activitispringboot.actviti.exclusive.ExclusiveExecutionListener"/>
-      <activiti:executionListener event="end" class="com.gelin.activitispringboot.actviti.exclusive.ExclusiveExecutionListener" />
+      <activiti:executionListener class="com.gelin.activitispringboot.actviti.exclusive.ExclusiveExecutionListener" event="start"/>
+      <activiti:executionListener class="com.gelin.activitispringboot.actviti.exclusive.ExclusiveExecutionListener" event="end"/>
     </extensionElements>
-
     <startEvent id="_2" name="StartEvent"/>
     <userTask activiti:exclusive="true" id="_3" name="费用报销申请"/>
     <exclusiveGateway gatewayDirection="Unspecified" id="_4" name="ExclusiveGateway"/>
     <userTask activiti:exclusive="true" id="_5" name="部门经理审批">
       <extensionElements>
-        <activiti:taskListener event="create" class="com.gelin.activitispringboot.actviti.exclusive.ExclusiveGateWayTaskListener"/>
+        <activiti:taskListener class="com.gelin.activitispringboot.actviti.exclusive.ExclusiveGateWayTaskListener" event="create"/>
       </extensionElements>
     </userTask>
     <userTask activiti:exclusive="true" id="_6" name="财务审批">
       <extensionElements>
-        <activiti:taskListener event="create" class="com.gelin.activitispringboot.actviti.exclusive.ExclusiveGateWayTaskListener"/>
+        <activiti:taskListener class="com.gelin.activitispringboot.actviti.exclusive.ExclusiveGateWayTaskListener" event="create"/>
       </extensionElements>
     </userTask>
     <userTask activiti:exclusive="true" id="_7" name="总经理审批">
       <extensionElements>
-        <activiti:taskListener event="create" class="com.gelin.activitispringboot.actviti.exclusive.ExclusiveGateWayTaskListener"/>
+        <activiti:taskListener class="com.gelin.activitispringboot.actviti.exclusive.ExclusiveGateWayTaskListener" event="create"/>
       </extensionElements>
     </userTask>
     <endEvent id="_8" name="EndEvent"/>
     <sequenceFlow id="_9" sourceRef="_2" targetRef="_3"/>
     <sequenceFlow id="_10" sourceRef="_3" targetRef="_4"/>
-    <sequenceFlow id="_11" name="默认执行，金额小于500" sourceRef="_4" targetRef="_5"/>
+    <sequenceFlow id="_11" name="金额小于500" sourceRef="_4" targetRef="_5">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${money<500}]]></conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="_12" name="金额小于等于1000,大于等于500" sourceRef="_4" targetRef="_6">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${money>=500&&money<=1000}]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${money>=500 && money<=1000}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_13" name="金额大于1000" sourceRef="_4" targetRef="_7">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${money>1000}]]></conditionExpression>
-    </sequenceFlow>
+    <sequenceFlow id="_13" name="默认执行，金额大于1000" sourceRef="_4" targetRef="_7"/>
     <sequenceFlow id="_14" sourceRef="_5" targetRef="_8"/>
     <sequenceFlow id="_15" sourceRef="_6" targetRef="_8"/>
     <sequenceFlow id="_16" sourceRef="_7" targetRef="_8"/>

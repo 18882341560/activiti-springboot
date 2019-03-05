@@ -26,13 +26,13 @@
     <endEvent id="_8" name="EndEvent"/>
     <sequenceFlow id="_9" sourceRef="_2" targetRef="_3"/>
     <sequenceFlow id="_10" sourceRef="_3" targetRef="_4"/>
-    <sequenceFlow id="_11" name="金额小于500" sourceRef="_4" targetRef="_5">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${money<500}]]></conditionExpression>
-    </sequenceFlow>
+    <sequenceFlow id="_11" name="金额小于500" sourceRef="_4" targetRef="_5"/>
     <sequenceFlow id="_12" name="金额小于等于1000,大于等于500" sourceRef="_4" targetRef="_6">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${money>=500 && money<=1000}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="_13" name="默认执行，金额大于1000" sourceRef="_4" targetRef="_7"/>
+    <sequenceFlow id="_13" name="默认执行，金额大于1000" sourceRef="_4" targetRef="_7">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${money>1000}]]></conditionExpression>
+    </sequenceFlow>
     <sequenceFlow id="_14" sourceRef="_5" targetRef="_8"/>
     <sequenceFlow id="_15" sourceRef="_6" targetRef="_8"/>
     <sequenceFlow id="_16" sourceRef="_7" targetRef="_8"/>

@@ -53,8 +53,8 @@ public class ExclusiveGateWayTest {
         // 需要任务id
         // 完成任务的同时，设置流程变量，使用流程变量用来指定完成后的下一次连线，对应 ${money...}
         Map<String,Object> map = new HashMap<>();
-        map.put("money",400);
-        taskService.complete("80005",map);
+        map.put("money",1000);
+        taskService.complete("210005",map);
 
         System.out.println("任务完成");
     }

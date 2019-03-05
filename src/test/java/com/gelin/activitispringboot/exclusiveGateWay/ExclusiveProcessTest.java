@@ -36,12 +36,13 @@ public class ExclusiveProcessTest {
     private TaskService taskService;
 
 
-    // 流程部署
+    // 流程部署,todo 注意从上到下检索如果发现第一条决策结果为true或者没有设置条件的(默认为成立)，则流出。
     @Test
     public void deploySimpleProcessDefinition() {
         Deployment deploy = repositoryService.createDeployment()
                 .name("排他网关测试流程")
                 .addClasspathResource("processes/exclusiveGateWay/exclusive.bpmn")
+//                .addClasspathResource("processes/exclusiveGateWay/bugexclusive.bpmn")
                 .deploy();
         System.out.println("deployId:"+deploy.getId());
     }
@@ -51,6 +52,11 @@ public class ExclusiveProcessTest {
     @Test
     public void startProcess(){
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("exclusiveProcess");
+        Task task = taskService.createTaskQuery()
+                .processInstanceId(processInstance.getId())
+                .singleResult();
+        //谁申请，就设置谁待办
+        taskService.addCandidateUser(task.getId(),"葛林");
         System.out.println("processInstanceId:"+processInstance.getId());
     }
 
@@ -59,7 +65,7 @@ public class ExclusiveProcessTest {
     public void findUsersTask(){
         List<Task> list = taskService.createTaskQuery() // 创建人物查询对象
                 .processDefinitionKey("exclusiveProcess")
-                .taskCandidateUser("老王")
+                .taskCandidateUser("小红")
                 .list();
 
         if(list != null && list.size()>0){
@@ -76,11 +82,20 @@ public class ExclusiveProcessTest {
     }
 
 
-    // 完成我的任务
+    // 完成申请
     @Test
-    public void completeMyTask(){
-//        taskService.claim("155002","老胡");
-        taskService.complete("155002");
+    public void apply(){
+        Map<String,Object> map = Maps.newHashMap();
+        map.put("money",510);
+        taskService.claim("245005","葛林");
+        taskService.complete("245005",map);
+    }
+
+
+    @Test
+    public void exam(){
+        taskService.claim("247505","小红");
+        taskService.complete("247505");
     }
 
 
@@ -88,7 +103,7 @@ public class ExclusiveProcessTest {
     //向组任务中添加成员
     @Test
     public void addGroupUser(){
-        taskService.addCandidateUser("112505","小F");
+        taskService.addCandidateUser("247505","小红");
     }
 
 
