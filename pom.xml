@@ -122,6 +122,16 @@
             <version>27.0.1-jre</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.activiti/activiti-bpmn-layout -->
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-bpmn-layout</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+
+
+
+
 
 
         <dependency>
