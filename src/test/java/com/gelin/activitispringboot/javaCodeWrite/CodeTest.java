@@ -18,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.io.ByteArrayInputStream;
 import java.util.List;
 
 /**
@@ -42,14 +41,19 @@ public class CodeTest {
     @Test
     public void deploySimpleProcessDefinition() {
 
-        byte[] bytes = new BpmnXMLConverter().convertToXML(createBpmnModel());
+//        byte[] bytes = new BpmnXMLConverter().convertToXML(createBpmnModel());
+//
+//        //扩展名为bpmn20.xml和bpmn被认为是流程定义的文件;
+//        String processName = "javaCode3"+".bpmn20.xml";
+//
+//        Deployment deployment = repositoryService.createDeployment()
+//                .name("javaCode3")
+//                .addString(processName, new String(bytes))
+//                .deploy();
 
-        //后面这个.bpmn20.xml不要变
-        String processName = "javaCode3"+".bpmn20.xml";
-
-        Deployment deployment = repositoryService.createDeployment()
-                .name("javaCode3")
-                .addString(processName, new String(bytes))
+        repositoryService.createDeployment()
+                .name("javaCode4")
+                .addBpmnModel("javaCode4.bpmn",createBpmnModel())
                 .deploy();
     }
 
