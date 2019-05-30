@@ -67,7 +67,7 @@ public class AuditProcessServiceImpl implements AuditProcessService {
         String resourceName = "";
         if(resourceNames != null && resourceNames.size()>0){
             for (String name:resourceNames) {
-                if(name.indexOf(".png")>=0){
+                if(name.contains(".png")){
                     resourceName = name;
                 }
             }
@@ -108,9 +108,9 @@ public class AuditProcessServiceImpl implements AuditProcessService {
     @Override
     public Object delDeployById(String id) throws Exception {
         //true 级联删除
-//        repositoryService.deleteDeployment(id,true);
+        repositoryService.deleteDeployment(id,true);
 //        repositoryService.suspendProcessDefinitionByKey("AuditProcess",true,null);
-        repositoryService.activateProcessDefinitionByKey("AuditProcess",true,null);
+//        repositoryService.activateProcessDefinitionByKey("AuditProcess",true,null);
         return "删除成功";
     }
 

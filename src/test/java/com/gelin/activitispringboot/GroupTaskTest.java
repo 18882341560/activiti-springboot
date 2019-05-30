@@ -1,9 +1,12 @@
 package com.gelin.activitispringboot;
 
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.Process;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.util.ProcessDefinitionUtil;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.IdentityLink;
@@ -102,5 +105,11 @@ public class GroupTaskTest {
     }
 
 
+    @Test
+    public void test(){
+        BpmnModel bpmnModel =repositoryService.getBpmnModel("AuditProcess:1:47504");
+        List<Process> processes = bpmnModel.getProcesses();
+        System.out.println(processes);
+    }
 
 }

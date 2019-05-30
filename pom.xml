@@ -129,9 +129,11 @@
             <version>6.0.0</version>
         </dependency>
 
-
-
-
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti5-engine</artifactId>
+            <version>6.0.0</version>
+        </dependency>
 
 
         <dependency>

@@ -1,5 +1,6 @@
 package com.gelin.activitispringboot;
 
+import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -17,6 +18,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -32,14 +35,13 @@ public class ProcessDefinitionTest {
     @Resource
     private TaskService taskService;
 
-   /**
-    *
-    *跟流程定义相关的表  re开头的
-    * act_re_deployment 部署对象表
-    *act_re_procdef 流程定义表
-    * act_ge_bytearray 资源文件表
-    * act_ge_property 主键生成策略表  next.dbid 下一个主键是多少
-    */
+    /**
+     * 跟流程定义相关的表  re开头的
+     * act_re_deployment 部署对象表
+     * act_re_procdef 流程定义表
+     * act_ge_bytearray 资源文件表
+     * act_ge_property 主键生成策略表  next.dbid 下一个主键是多少
+     */
 
     // 流程部署 从classpath下
     @Test
@@ -48,8 +50,8 @@ public class ProcessDefinitionTest {
                 .name("测试流程")
                 .addClasspathResource("processes/test.bpmn")
                 .deploy();
-        System.out.println("部署Id:"+deploy.getId());
-        System.out.println("部署名称:"+deploy.getName());
+        System.out.println("部署Id:" + deploy.getId());
+        System.out.println("部署名称:" + deploy.getName());
     }
 
     // 流程部署 zip下
@@ -61,13 +63,13 @@ public class ProcessDefinitionTest {
                 .name("请假流程")
                 .addZipInputStream(zipInputStream)
                 .deploy();
-        System.out.println("部署Id:"+deploy.getId());
-        System.out.println("部署名称:"+deploy.getName());
+        System.out.println("部署Id:" + deploy.getId());
+        System.out.println("部署名称:" + deploy.getName());
     }
 
     // 查询流程定义表
     @Test
-    public void findProcessDefinition(){
+    public void findProcessDefinition() {
         List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery()
 //                          .deploymentId() // 使用部署id查询
 //                            .processDefinitionId() // 使用流程表的id查询
@@ -87,12 +89,12 @@ public class ProcessDefinitionTest {
 
     //删除流程定义
     @Test
-    public void delProcess(){
+    public void delProcess() {
         // 不带级联的删除，只能删除没有启动的流程，如果启动则会抛出异常
 //         repositoryService.deleteDeployment("5001");
 
-         // 级联删除，都可以删除 ，比较常用
-         repositoryService.deleteDeployment("5001",true);
+        // 级联删除，都可以删除 ，比较常用
+        repositoryService.deleteDeployment("5001", true);
     }
 
 
@@ -105,17 +107,25 @@ public class ProcessDefinitionTest {
         List<String> resourceNames = repositoryService.getDeploymentResourceNames(deplymentId);
 
         String resourceName = "";
-        if(resourceNames != null && resourceNames.size()>0){
-            for (String name:resourceNames) {
-                if(name.indexOf(".png")>=0){
+        if (resourceNames != null && resourceNames.size() > 0) {
+            for (String name : resourceNames) {
+                if (name.indexOf(".png") >= 0) {
                     resourceName = name;
                 }
             }
         }
 
         InputStream inputStream = repositoryService.getResourceAsStream(deplymentId, resourceName);
-        File file = new File("D:/"+resourceName);
-        FileUtils.copyInputStreamToFile(inputStream,file);
+        File file = new File("D:/" + resourceName);
+        FileUtils.copyInputStreamToFile(inputStream, file);
+    }
+
+
+    @Test
+    public void test11() {
+        BpmnModel bpmnModel = repositoryService.getBpmnModel("AuditProcess:1:47504");
+        bpmnModel.getF
+        System.out.println(bpmnModel);
     }
 
 }
