@@ -465,11 +465,11 @@ public class AuditProcessServiceImpl implements AuditProcessService {
         ProcessDiagramGenerator processDiagramGenerator = new FangfaProcessDiagramGenerator();
         InputStream imageStream = null;
         if(Objects.isNull(proFlowPng)){
-            ProFlowPng proFlowPng1 = new ProFlowPng();
-            proFlowPng1.setProcessInstanceId(processInstanceId);
-            proFlowPng1.setFileUrl("D:/1.png");
-            baseDao.insertProFile(proFlowPng1);
-            FileCopyUtils.copy(imageStream,new FileOutputStream("D:/1.png"));
+//            ProFlowPng proFlowPng1 = new ProFlowPng();
+//            proFlowPng1.setProcessInstanceId(processInstanceId);
+//            proFlowPng1.setFileUrl("D:/1.png");
+//            baseDao.insertProFile(proFlowPng1);
+//            FileCopyUtils.copy(imageStream,new FileOutputStream("D:/1.png"));
             imageStream = processDiagramGenerator.generateDiagram(
                     bpmnModel,
                     "png",

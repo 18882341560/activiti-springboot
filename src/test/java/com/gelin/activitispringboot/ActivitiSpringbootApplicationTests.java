@@ -31,7 +31,7 @@ public class ActivitiSpringbootApplicationTests {
     public void deploySimpleProcessDefinition() {
         Deployment deploy = repositoryService.createDeployment()
                 .name("测试流程")
-                .addClasspathResource("processes/helloworld.bpmn")
+                .addClasspathResource("processes/test2.bpmn")
                 .deploy();
         System.out.println(deploy);
     }
@@ -39,7 +39,7 @@ public class ActivitiSpringbootApplicationTests {
     // 启动流程实例
     @Test
     public void startProcess(){
-        ProcessInstance helloworld = runtimeService.startProcessInstanceByKey("helloworld");// 使用 key 来启动好处 默认寻找最新版本，版本多了的话
+        ProcessInstance helloworld = runtimeService.startProcessInstanceByKey("test2");// 使用 key 来启动好处 默认寻找最新版本，版本多了的话
     }
 
     @Test
