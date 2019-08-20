@@ -53,7 +53,8 @@ public class MultiInstanceTest {
     @Test
     public void findMyTask() {
         List<Task> taskList = taskService.createTaskQuery() // 创建人物查询对象
-                .taskAssignee("王五")  //指定个人任务查询
+//                .taskAssignee("小F")  //指定个人任务查询
+                .taskCandidateUser("小F")
                 .list();
         if (taskList != null && taskList.size() > 0) {
             for (Task task : taskList) {
@@ -74,6 +75,20 @@ public class MultiInstanceTest {
         // 需要任务id
         Map<String, Object> map = Maps.newHashMap();
         map.put("check", 2);
-        taskService.complete("10019", map);
+        taskService.complete("2505");
+    }
+
+    //向组任务中添加成员
+    @Test
+    public void addGroupUser(){
+        taskService.addCandidateUser("5023","小F");
+    }
+
+
+    //向组任务中删除成员
+    @Test
+    public void delGroupUser(){
+        // 只会删除 type 为 候选者的一条数据，参与者这条数据没有删除，这样 这个候选者  与参与者 的区别就出来了
+        taskService.deleteCandidateUser("5023","王五");
     }
 }

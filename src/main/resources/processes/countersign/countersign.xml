@@ -16,7 +16,7 @@
              processType="None">
         <startEvent id="_2" name="StartEvent"/>
         <userTask activiti:exclusive="true" id="_3" name="选商方式审批" activiti:assignee="张三"/>
-        <userTask activiti:exclusive="true" id="_4" name="在线选商审批" activiti:assignee="${user}">
+        <userTask activiti:exclusive="true" id="_4" name="在线选商审批" activiti:candidateUsers="${user}">
             <extensionElements>
                 <activiti:taskListener event="complete"
                                        class="com.gelin.activitispringboot.actviti.multiInstanceCompleteListener"/>
